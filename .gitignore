@@ -1,0 +1,8 @@
+build/
+cmake-build-*/
+dataset/raw/
+dataset/primitives/generated/
+learned/
+output/
+*.log
+.DS_Store
