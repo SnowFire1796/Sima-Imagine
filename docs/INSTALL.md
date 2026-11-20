@@ -27,7 +27,19 @@ mkdir -p dataset/raw/cat
 ./build/sima inspect --file learned/cat/definitions/cat-0001.sdf
 ```
 
-Render the included geometric cat example without training first:\n\`\`\`bash\n./build/sima render --file examples/geometric_cat.sdf --output output/demo.png --size 512\n\`\`\`\n\nGenerate primitive references:\n\`\`\`bash\n./build/sima primitives --output dataset/primitives\n\`\`\`\n\nFor masks with matching filenames:
+Render the included geometric cat example without training first:
+
+```bash
+./build/sima render --file examples/geometric_cat.sdf --output output/demo.png --size 512
+```
+
+Generate primitive references:
+
+```bash
+./build/sima primitives --output dataset/primitives
+```
+
+For masks with matching filenames:
 ```bash
 ./build/sima train --input dataset/raw/cat --masks dataset/masks/cat --class cat --output learned
 ```
