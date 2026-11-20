@@ -1,0 +1,19 @@
+#include "sima/renderer.hpp"
+#include "sima/image.hpp"
+#include <algorithm>
+#include <cmath>
+#include <random>
+#include <stdexcept>
+namespace sima {
+namespace {
+constexpr double pi=3.14159265358979323846;
+void put(Image&i,int x,int y,int v){if(x>=0&&y>=0&&x<i.width&&y<i.height)i.at(x,y)=static_cast<std::uint8_t>(std::clamp(v,0,255));}
+void disk(Image&i,int cx,int cy,int r,int c){for(int y=-r;y<=r;++y)for(int x=-r;x<=r;++x)if(x*x+y*y<=r*r)put(i,cx+x,cy+y,c);}
+void line(Image&i,Point a,Point b,int c,int t){int n=std::max(1,static_cast<int>(std::ceil(std::hypot(b.x-a.x,b.y-a.y))));for(int j=0;j<=n;++j){double u=static_cast<double>(j)/n;disk(i,static_cast<int>(std::round(a.x+(b.x-a.x)*u)),static_cast<int>(std::round(a.y+(b.y-a.y)*u)),std::max(0,t/2),c);}}
+void fill_poly(Image&i,const std::vector<Point>&p,int c){if(p.size()<3)return;auto b=bounds_of(p);for(int y=std::max(0,static_cast<int>(b.y));y<=std::min(i.height-1,static_cast<int>(b.y+b.height));++y){std::vector<double>xv;for(std::size_t k=0;k<p.size();++k){auto a=p[k],z=p[(k+1)%p.size()];if((a.y<=y&&z.y>y)||(z.y<=y&&a.y>y))xv.push_back(a.x+(y-a.y)*(z.x-a.x)/(z.y-a.y));}std::sort(xv.begin(),xv.end());for(std::size_t k=0;k+1<xv.size();k+=2)for(int x=std::max(0,static_cast<int>(std::ceil(xv[k])));x<=std::min(i.width-1,static_cast<int>(xv[k+1]));++x)put(i,x,y,c);}}
+std::vector<Point> points_for(const Shape&s,int w,int h){std::vector<Point>p;if(!s.points.empty()){for(auto q:s.points)p.push_back({q.x*w,q.y*h});}else{double x=s.x*w,y=s.y*h,bw=s.width*w,bh=s.height*h;if(s.type=="ellipse"||s.type=="circle"){for(int j=0;j<48;++j){double a=2*pi*j/48;p.push_back({x+bw/2+std::cos(a)*bw/2,y+bh/2+std::sin(a)*bh/2});}}else if(s.type=="triangle")p={{x+bw/2,y},{x+bw,y+bh},{x,y+bh}};else if(s.type=="trapezoid")p={{x+bw*.2,y},{x+bw*.8,y},{x+bw,y+bh},{x,y+bh}};else p={{x,y},{x+bw,y},{x+bw,y+bh},{x,y+bh}};}for(auto&q:p){if(s.flip_x)q.x=w-q.x;if(s.flip_y)q.y=h-q.y;}if(std::abs(s.rotation)>.001&&!p.empty()){double cx=0,cy=0;for(auto q:p){cx+=q.x;cy+=q.y;}cx/=p.size();cy/=p.size();double a=s.rotation*pi/180;for(auto&q:p){double dx=q.x-cx,dy=q.y-cy;q={cx+dx*std::cos(a)-dy*std::sin(a),cy+dx*std::sin(a)+dy*std::cos(a)};}}return p;}
+void draw(Image&i,const Shape&s){auto p=points_for(s,i.width,i.height);if(p.size()<3)return;fill_poly(i,p,s.fill);if(s.outline_width>0)for(std::size_t k=0;k<p.size();++k)line(i,p[k],p[(k+1)%p.size()],s.outline,std::max(1,static_cast<int>(s.outline_width)));}
+}
+Image render_document(const Document&d,const RenderOptions&o){if(o.width<16||o.height<16||o.width>4096||o.height>4096)throw std::runtime_error("Output dimensions must be 16..4096");int ss=std::clamp(o.supersampling,1,4),w=o.width*ss,h=o.height*ss;Image hi{w,h,1,std::vector<std::uint8_t>(static_cast<std::size_t>(w)*h,255)};for(auto s:d.shapes){s.outline_width*=ss;draw(hi,s);}Image out{o.width,o.height,1,std::vector<std::uint8_t>(static_cast<std::size_t>(o.width)*o.height,255)};for(int y=0;y<o.height;++y)for(int x=0;x<o.width;++x){unsigned sum=0;for(int yy=0;yy<ss;++yy)for(int xx=0;xx<ss;++xx)sum+=hi.at(x*ss+xx,y*ss+yy);out.at(x,y)=static_cast<std::uint8_t>(sum/static_cast<unsigned>(ss*ss));}if(o.invert)for(auto&v:out.pixels)v=static_cast<std::uint8_t>(255-v);return out;}
+Image generate_from_library(const std::filesystem::path&r,const std::string&c,const RenderOptions&o){auto dir=r/c/"definitions";if(!std::filesystem::exists(dir))throw std::runtime_error("No learned definitions: "+dir.string());std::vector<std::filesystem::path>f;for(auto&e:std::filesystem::directory_iterator(dir))if(e.is_regular_file()&&e.path().extension()==".sdf")f.push_back(e.path());std::sort(f.begin(),f.end());if(f.empty())throw std::runtime_error("No SDF templates in learned category");std::mt19937_64 rng(o.seed);std::uniform_int_distribution<std::size_t>pick(0,f.size()-1);return render_document(load_sdf(f[pick(rng)]),o);}
+}
