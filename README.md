@@ -36,7 +36,12 @@ With foreground masks:
 ./build/sima train --input dataset/raw/cat --masks dataset/masks/cat --class cat --output learned
 ```
 
-Generate the built-in monochrome primitive references (triangle, circle, ellipse, rectangle, trapezoid):\n\`\`\`bash\n./build/sima primitives --output dataset/primitives\n\`\`\`\n\n## Learned library
+Generate the built-in monochrome primitive references (triangle, circle, ellipse, rectangle, trapezoid):
+```bash
+./build/sima primitives --output dataset/primitives
+```
+
+## Learned library
 ```
 learned/cat/
   images/       normalized monochrome previews
