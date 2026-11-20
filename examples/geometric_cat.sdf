@@ -1,0 +1,17 @@
+SIMA_SDF 1
+name "geometric_cat_demo"
+canvas 256 256
+mode monochrome
+shapes 12
+shape ellipse tail 0.62 0.72 0.30 0.12 -35 0 0 255 0 3 0
+shape ellipse body 0.30 0.61 0.42 0.31 0 0 0 255 0 3 0
+shape rectangle rear_leg 0.35 0.82 0.10 0.14 0 0 0 255 0 3 0
+shape rectangle front_leg 0.57 0.82 0.10 0.14 0 0 0 255 0 3 0
+shape triangle left_ear 0.22 0.08 0.25 0.29 -8 0 0 255 0 3 0
+shape triangle right_ear 0.53 0.08 0.25 0.29 8 0 0 255 0 3 0
+shape ellipse head 0.18 0.20 0.64 0.56 0 0 0 255 0 3 0
+shape ellipse left_eye 0.34 0.40 0.09 0.12 0 0 0 0 0 1 0
+shape ellipse right_eye 0.57 0.40 0.09 0.12 0 0 0 0 0 1 0
+shape triangle nose 0.455 0.52 0.09 0.07 180 0 0 0 0 1 0
+shape ellipse mouth_left 0.435 0.59 0.06 0.025 20 0 0 0 0 1 0
+shape ellipse mouth_right 0.505 0.59 0.06 0.025 -20 0 0 0 0 1 0
