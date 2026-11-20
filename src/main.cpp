@@ -2,6 +2,8 @@
 #include "sima/trainer.hpp"
 #include "sima/image.hpp"
 #include <iostream>
+#include <filesystem>
+#include <vector>
 #include <map>
 #include <stdexcept>
 #include <string>
