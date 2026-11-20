@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <stdexcept>
+#include <utility>
 namespace sima {
 namespace {
 Image auto_mask(const Image&g){Image m{g.width,g.height,1,std::vector<std::uint8_t>(g.pixels.size())};long sum=0;std::size_t n=0;for(int x=0;x<g.width;++x){sum+=g.at(x,0)+g.at(x,g.height-1);n+=2;}for(int y=1;y<g.height-1;++y){sum+=g.at(0,y)+g.at(g.width-1,y);n+=2;}int bg=static_cast<int>(sum/static_cast<long>(std::max<std::size_t>(n,1))),t=std::clamp(255-bg+24,18,55);for(int y=0;y<g.height;++y)for(int x=0;x<g.width;++x)if(std::abs(static_cast<int>(g.at(x,y))-bg)>t)m.at(x,y)=255;return m;}
