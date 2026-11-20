@@ -12,7 +12,7 @@ void help(){std::cout<<R"(Sima-Imagine 0.1.0 - C++26 monochrome geometry image e
 Commands:
  sima train --input DIR --class NAME [--output learned] [--masks DIR] [--size 256] [--limit N]
  sima generate --class NAME [--learned learned] [--output output/result.png] [--size 256] [--seed 1] [--invert]
- sima inspect --file PATH.sdf
+ sima inspect --file PATH.sdf\n sima primitives [--output dataset/primitives]
  sima help
 Masks: image and mask must share a basename; mask label 2 is treated as background.
 v0.1 extracts whole-object silhouettes; it does not label semantic parts (eyes/ears/nose).
