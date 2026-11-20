@@ -23,7 +23,7 @@ cmake --build build -j2
 ctest --test-dir build --output-on-failure
 ```
 
-## Train and generate
+## Built-in geometric demo\n\nRender the included hand-authored cartoon cat (no dataset required):\n\n```bash\n./build/sima render --file examples/geometric_cat.sdf --output output/geometric_cat.png --size 512\n```\n\nGenerate a small reference library of primitive shapes:\n\n```bash\n./build/sima primitives --output dataset/primitives\n```\n\n## Train and generate
 ```bash
 mkdir -p dataset/raw/cat
 # add cat photos to dataset/raw/cat/
